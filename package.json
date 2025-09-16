@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/ApolloniusMonk/pt-be-airbnc#readme",
   "dependencies": {
+    "dotenv": "^17.2.2",
     "pg": "^8.16.3"
   }
 }
