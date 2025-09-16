@@ -1,0 +1,25 @@
+{
+  "name": "pt-be-airbnc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup-db": "psql -f db/setup-db.sql"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ApolloniusMonk/pt-be-airbnc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ApolloniusMonk/pt-be-airbnc/issues"
+  },
+  "homepage": "https://github.com/ApolloniusMonk/pt-be-airbnc#readme",
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
