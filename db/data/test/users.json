@@ -46,5 +46,21 @@
     "phone_number": "+44 7000 666666",
     "is_host": false,
     "avatar": "https://example.com/images/rachel.jpg"
+  },
+  {
+    "first_name": "Laura",
+    "surname": "Chen",
+    "email": "laura@example.com",
+    "phone_number": "+44 7000 777777",
+    "is_host": false,
+    "avatar": "https://example.com/images/laura.jpg"
+  },
+  {
+    "first_name": "Michael",
+    "surname": "Harris",
+    "email": "michael@example.com",
+    "phone_number": "+44 7000 888888",
+    "is_host": false,
+    "avatar": "https://example.com/images/michael.jpg"
   }
 ]
