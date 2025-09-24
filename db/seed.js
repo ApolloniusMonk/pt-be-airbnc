@@ -49,6 +49,11 @@ async function seed(property_types, users) {
                  [user_id, first_name, surname, email, phone_number, is_host, avatar, created_at])
     )
   );
+  await db.query(
+    format(`INSERT INTO properties (property_id, host_id, name, location, property_type, price_per_night, description) VALUES %L`,
+      properties.map(({property_id, host_id, name, location, property_type, price_per_night, description}) => [property_id, host_id, name, location, property_type, price_per_night, description])
+    )
+  );
 
                 
 
