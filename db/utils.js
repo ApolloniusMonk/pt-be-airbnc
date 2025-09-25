@@ -7,5 +7,13 @@ return users.map((user, index) => {
     }
 })
 }
-module.exports = addUserDefaults;
+
+
+function formatProperties(properties = [], users = []){
+    return []
+}
+
+module.exports = {addUserDefaults, formatProperties}
+
+
 
