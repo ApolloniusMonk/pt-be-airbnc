@@ -19,10 +19,10 @@ describe("addUserDefaults", () => {
 })   
 
 describe("format properties", () => {
-    test.only("returns an empty array when given an empty array", () => {
+    test("returns an empty array when given an empty array", () => {
         expect(formatProperties([])).toEqual([]);
     })
-    test.only("maps a property with a host_name to the correct host_id", () => {
+    test("maps a property with a host_name to the correct host_id", () => {
         const users = [{user_id: 1, first_name: "Alice", surname: "Johnson"}]
         const properties = [{
     "name": "Modern Apartment in City Center",

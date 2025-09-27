@@ -10,7 +10,20 @@ return users.map((user, index) => {
 
 
 function formatProperties(properties = [], users = []){
-    return []
+    return properties.map((property) => {
+        const host = users.find(
+            (user) =>
+                `${user.first_name} ${user.surname}` === property.host_name
+        );
+        return {
+            host_id: host ? host.user_id : null,
+            name: property.name,
+            location: property.location,
+            property_type: property.property_type,
+            price_per_night: property.price_per_night,
+            description: property.description,
+        };
+    });
 }
 
 module.exports = {addUserDefaults, formatProperties}

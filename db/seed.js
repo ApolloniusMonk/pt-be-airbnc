@@ -1,6 +1,6 @@
 const db = require("./db-connection-pool");
 const format = require("pg-format");
-const addUserDefaults = require("./utils");
+const {addUserDefaults, formatProperties} = require("./utils");
 const dropTables = require("./queries/drops")
 
 async function seed(property_types, users, properties) {
@@ -34,6 +34,15 @@ async function seed(property_types, users, properties) {
                 description TEXT
                 );`)              
   
+  await db.query(`CREATE TABLE reviews(
+                review_id SERIAL PRIMARY KEY,
+                property_id INT NOT NULL REFERENCES properties(property_id),
+                guest_id INT NOT NULL REFERENCES users(user_id),
+                rating INT NOT NULL,
+                comment TEXT,
+                created_at TIMESTAMP DEFAULT NOW()
+                );`);
+
   await db.query(
     format(`INSERT INTO property_types (property_type, description) VALUES %L`,
       property_types.map(({property_type, description}) => [property_type, description])
@@ -48,12 +57,17 @@ async function seed(property_types, users, properties) {
                              [user_id, first_name, surname, email, phone_number, is_host, avatar, created_at])
     )
   );
+
+  const formattedProperties = formatProperties(properties, usersWithDefaults) 
+
   await db.query(
     format(`INSERT INTO properties (host_id, name, location, property_type, price_per_night, description) VALUES %L`,
-      properties.map(({host_id, name, location, property_type, price_per_night, description}) => 
+      formattedProperties.map(({host_id, name, location, property_type, price_per_night, description}) => 
                       [host_id, name, location, property_type, price_per_night, description])
     )
   );
+
+
 
                 
 
