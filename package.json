@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup-db": "psql -f db/setup-db.sql",
     "seed": "node ./db/seed-run",
-    "test-utils": "jest utils"
+    "test-utils": "jest utils",
+    "test-app": "jest app",
+    "dev": "nodemon listen.js"
   },
   "repository": {
     "type": "git",
@@ -23,10 +25,13 @@
   "homepage": "https://github.com/ApolloniusMonk/pt-be-airbnc#readme",
   "dependencies": {
     "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
     "pg": "^8.16.3",
     "pg-format": "^1.0.4"
   },
   "devDependencies": {
-    "jest": "^30.1.3"
+    "jest": "^30.1.3",
+    "supertest": "^7.1.4"
   }
 }
