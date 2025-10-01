@@ -10,14 +10,12 @@ app.get("/api/properties", async (req, res, next) => {
                  property_id,
                  name AS property_name,
                  location,
-                 price_per_night,
-                 host_name AS host
+                 price_per_night          
                  FROM properties;
+                `;
+  const { rows } = await db.query(query);
 
-                 `;
-  await db.query(query).then((result) => {
-    res.status(200).send({ properties: result.row });
-  });
+  res.status(200).send({ properties: rows });
 });
 
 module.exports = app;

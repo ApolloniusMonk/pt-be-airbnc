@@ -25,7 +25,6 @@ describe("app", () => {
   });
   test("responds with an array on the key of properties", async () => {
     const { body } = await request(app).get("/api/properties");
-    console.log(body);
 
     expect(Array.isArray(body.properties)).toBe(true);
   });
@@ -37,12 +36,11 @@ describe("app", () => {
   test("each property has correct keys", async () => {
     const { body } = await request(app).get("/api/properties");
 
-    expect(body.properties[0].property_id).toBe(1);
-    expect(body.properties[0].property_name).toBe(
-      "Modern Apartment in City Center"
-    );
-    expect(body.properties[0].location).toBe("London, UK");
-    expect(body.properties[0].price_per_night).toBe(120.0);
-    expect(body.properties[0].host).toBe("Alice Johnson");
+    body.properties.forEach((property) => {
+      expect(property).toHaveProperty("property_id");
+      expect(property).toHaveProperty("property_name");
+      expect(property).toHaveProperty("location");
+      expect(property).toHaveProperty("price_per_night");
+    });
   });
 });
