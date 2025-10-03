@@ -41,6 +41,7 @@ describe("app", () => {
       expect(property).toHaveProperty("property_name");
       expect(property).toHaveProperty("location");
       expect(property).toHaveProperty("price_per_night");
+      expect(property).toHaveProperty("host");
     });
   });
 });
