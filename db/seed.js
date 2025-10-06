@@ -1,9 +1,15 @@
 const db = require("./db-connection-pool");
+
 const format = require("pg-format");
-const { addUserDefaults, formatProperties, formatReviews } = require("./utils");
+const {
+  addUserDefaults,
+  formatProperties,
+  formatReviews,
+  formatImages,
+} = require("./utils");
 const dropTables = require("./queries/drops");
 
-async function seed(property_types, users, properties, reviews) {
+async function seed(property_types, users, properties, reviews, images) {
   await dropTables();
 
   await db.query(`CREATE TABLE property_types(
@@ -40,6 +46,12 @@ async function seed(property_types, users, properties, reviews) {
                 comment TEXT,
                 created_at TIMESTAMP DEFAULT NOW()
                 );`);
+
+  await db.query(`CREATE TABLE images (
+                image_id SERIAL PRIMARY KEY,
+                property_id INT NOT NULL REFERENCES properties(property_id),
+                image_url VARCHAR NOT NULL,
+                alt_text VARCHAR NOT NULL);`);
 
   await db.query(
     format(
@@ -130,6 +142,19 @@ async function seed(property_types, users, properties, reviews) {
           created_at,
         ]
       )
+    )
+  );
+
+  const formattedImages = formatImages(images, insertedProperties);
+
+  await db.query(
+    format(
+      `INSERT INTO images (property_id, image_url, alt_text) VALUES %L`,
+      formattedImages.map(({ property_id, image_url, alt_text }) => [
+        property_id,
+        image_url,
+        alt_text,
+      ])
     )
   );
 }

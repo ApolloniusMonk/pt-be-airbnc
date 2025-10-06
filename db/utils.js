@@ -57,4 +57,23 @@ function formatReviews(reviews = [], users = [], properties = []) {
   });
 }
 
-module.exports = { addUserDefaults, formatProperties, formatReviews };
+function formatImages(images = [], properties = []) {
+  return images.map((image) => {
+    const property = properties.find((p) => p.name === image.property_name);
+
+    let property_id = null;
+
+    if (property) {
+      property_id = property.property_id;
+    }
+
+    return { property_id, image_url: image.image_url, alt_text: image.alt_tag };
+  });
+}
+
+module.exports = {
+  addUserDefaults,
+  formatProperties,
+  formatReviews,
+  formatImages,
+};

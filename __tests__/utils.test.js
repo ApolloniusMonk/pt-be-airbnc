@@ -2,6 +2,7 @@ const {
   addUserDefaults,
   formatProperties,
   formatReviews,
+  formatImages,
 } = require("../db/utils");
 
 describe("addUserDefaults", () => {
@@ -49,37 +50,79 @@ describe("format properties", () => {
       description: "Description of Modern Apartment in City Center.",
     });
   });
+});
 
-  describe("formatReviews", () => {
-    test("returns an empty array when given no reviews", () => {
-      expect(formatReviews([], [], [])).toEqual([]);
-    });
+describe("formatReviews", () => {
+  test("returns an empty array when given no reviews", () => {
+    expect(formatReviews([], [], [])).toEqual([]);
+  });
 
-    test("maps guest_name and property_name to correct IDs", () => {
-      const users = [{ user_id: 1, first_name: "Frank", surname: "White" }];
-      const properties = [
-        { property_id: 5, name: "Chic Studio Near the Beach" },
-      ];
+  test("maps guest_name and property_name to correct IDs", () => {
+    const users = [{ user_id: 1, first_name: "Frank", surname: "White" }];
+    const properties = [{ property_id: 5, name: "Chic Studio Near the Beach" }];
 
-      const reviews = [
-        {
-          guest_name: "Frank White",
-          property_name: "Chic Studio Near the Beach",
-          rating: 4,
-          comment: "Comment about Chic Studio Near the Beach",
-          created_at: "2024-03-28T10:15:00Z",
-        },
-      ];
-
-      const result = formatReviews(reviews, users, properties);
-
-      expect(result[0]).toMatchObject({
-        property_id: 5,
-        guest_id: 1,
+    const reviews = [
+      {
+        guest_name: "Frank White",
+        property_name: "Chic Studio Near the Beach",
         rating: 4,
         comment: "Comment about Chic Studio Near the Beach",
-      });
-      expect(result[0].created_at).toBeInstanceOf(Date);
+        created_at: "2024-03-28T10:15:00Z",
+      },
+    ];
+
+    const result = formatReviews(reviews, users, properties);
+
+    expect(result[0]).toMatchObject({
+      property_id: 5,
+      guest_id: 1,
+      rating: 4,
+      comment: "Comment about Chic Studio Near the Beach",
     });
+    expect(result[0].created_at).toBeInstanceOf(Date);
+  });
+});
+describe("formatImages", () => {
+  test("returns an empty array if passed no args", () => {
+    const result = formatImages();
+    expect(result).toEqual([]);
+  });
+
+  test("maps property_name to property_id using properties lookup", () => {
+    const images = [
+      {
+        property_name: "Modern Apartment",
+        image_url: "http://example.com/a.jpg",
+        alt_tag: "Modern Apartment alt",
+      },
+    ];
+    const properties = [{ property_id: 1, name: "Modern Apartment" }];
+    const result = formatImages(images, properties);
+    expect(result).toEqual([
+      {
+        property_id: 1,
+        image_url: "http://example.com/a.jpg",
+        alt_text: "Modern Apartment alt",
+      },
+    ]);
+  });
+
+  test("returns null property_id if property_name does not match any property", () => {
+    const images = [
+      {
+        property_name: "Unknown House",
+        image_url: "http://example.com/missing.jpg",
+        alt_tag: "Missing",
+      },
+    ];
+    const properties = [{ property_id: 5, name: "Known House" }];
+    const result = formatImages(images, properties);
+    expect(result).toEqual([
+      {
+        property_id: null,
+        image_url: "http://example.com/missing.jpg",
+        alt_text: "Missing",
+      },
+    ]);
   });
 });
