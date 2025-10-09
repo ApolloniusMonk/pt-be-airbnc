@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup-db": "psql -f db/setup-db.sql",
-    "seed": "node ./db/seed-run",
+    "setup-dbs": "psql -f db/setup-db.sql",
+    "seed-test": "node ./db/seed-run",
+    "seed-dev": "NODE_ENV=development node ./db/seed-run",
+    "seed-prod": "NODE_ENV=production node db/seed-run.js",
     "test-utils": "jest utils",
     "test-app": "jest app",
     "dev": "nodemon listen.js"

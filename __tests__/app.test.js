@@ -6,11 +6,18 @@ const {
   usersData,
   propertiesData,
   reviewsData,
+  imagesData,
 } = require("../db/data/test");
 const db = require("../db/db-connection-pool");
 
 beforeEach(async () => {
-  await seed(propertyTypesData, usersData, propertiesData, reviewsData);
+  await seed(
+    propertyTypesData,
+    usersData,
+    propertiesData,
+    reviewsData,
+    imagesData
+  );
 });
 
 afterAll(() => {
@@ -18,6 +25,11 @@ afterAll(() => {
 });
 
 describe("app", () => {
+  test("404 path not found", async () => {
+    const { body } = await request(app).get("/invalid/path").expect(404);
+
+    expect(body.msg).toBe("Path not found.");
+  });
   describe("GET api/properties", () => {
     test("responds with status of 200", async () => {
       await request(app).get("/api/properties").expect(200);
@@ -42,6 +54,26 @@ describe("app", () => {
       expect(property).toHaveProperty("location");
       expect(property).toHaveProperty("price_per_night");
       expect(property).toHaveProperty("host");
+    });
+  });
+  describe("GET api/properties/?property_type=<property type>", () => {
+    test("responds with status of 200", async () => {
+      const { body } = await request(app)
+        .get("/api/properties/?property_type=Apartment")
+        .expect(200);
+    });
+    test("responds with properties that match property type that has been passed", async () => {
+      const expectedApartments = propertiesData.filter(
+        (p) => p.property_type === "Apartment"
+      );
+
+      const { body } = await request(app)
+        .get("/api/properties/?property_type=Apartment")
+        .expect(200);
+      expect(body.properties).toHaveLength(expectedApartments.length);
+      body.properties.forEach((property) => {
+        expect(property.property_type).toBe("Apartment");
+      });
     });
   });
 });

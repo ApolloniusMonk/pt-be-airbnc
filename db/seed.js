@@ -1,3 +1,5 @@
+console.log(">>>seeding started");
+
 const db = require("./db-connection-pool");
 
 const format = require("pg-format");
@@ -28,7 +30,7 @@ async function seed(property_types, users, properties, reviews, images) {
                 created_at TIMESTAMP DEFAULT NOW()
                 );`);
 
-  await db.query(`CREATE TABLE properties(
+  await db.query(`CREATE TABLE properties( 
                 property_id SERIAL PRIMARY KEY,
                 host_id INT NOT NULL REFERENCES users(user_id),
                 name VARCHAR NOT NULL,

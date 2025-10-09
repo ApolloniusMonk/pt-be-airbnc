@@ -1,9 +1,12 @@
 const db = require("./db-connection-pool");
 const seed = require("./seed");
-const { propertyTypesData, imagesData } = require("./data/test");
-const { usersData } = require("./data/test");
-const { propertiesData } = require("./data/test");
-const { reviewsData } = require("./data/test");
+const {
+  propertyTypesData,
+  imagesData,
+  usersData,
+  propertiesData,
+  reviewsData,
+} = require("./data");
 
 seed(
   propertyTypesData,
