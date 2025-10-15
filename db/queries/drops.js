@@ -1,6 +1,7 @@
 const db = require("../db-connection-pool");
 
 async function dropTables() {
+  await db.query(`DROP TABLE IF EXISTS favourites`);
   await db.query(`DROP TABLE IF EXISTS images`);
   await db.query(`DROP TABLE IF EXISTS reviews`);
   await db.query(`DROP TABLE IF EXISTS properties;`);

@@ -73,9 +73,27 @@ function formatImages(images = [], properties = []) {
   });
 }
 
+function formatFavourites(favouritesRaw, insertedUsers, insertedProperties) {
+  return favouritesRaw.map(({ guest_name, property_name }) => {
+    const [first_name, ...surnameParts] = guest_name.split(" ");
+    const surname = surnameParts.join(" ");
+
+    const user = insertedUsers.find(
+      (u) => u.first_name === first_name && u.surname === surname
+    );
+    if (!user) throw new Error(`User not found: ${guest_name}`);
+
+    const property = insertedProperties.find((p) => p.name === property_name);
+    if (!property) throw new Error(`Property not found: ${property_name}`);
+
+    return { guest_id: user.user_id, property_id: property.property_id };
+  });
+}
+
 module.exports = {
   addUserDefaults,
   formatProperties,
   formatReviews,
   formatImages,
+  formatFavourites,
 };

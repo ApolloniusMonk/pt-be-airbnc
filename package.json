@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup-dbs": "psql -f db/setup-db.sql",
-    "seed-test": "node ./db/seed-run",
+    "seed-test": "NODE_ENV=test node ./db/seed-run",
     "seed-dev": "NODE_ENV=development node ./db/seed-run",
     "seed-prod": "NODE_ENV=production node db/seed-run.js",
     "test-utils": "jest utils",

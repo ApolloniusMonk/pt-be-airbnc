@@ -8,10 +8,18 @@ const {
   formatProperties,
   formatReviews,
   formatImages,
+  formatFavourites,
 } = require("./utils");
 const dropTables = require("./queries/drops");
 
-async function seed(property_types, users, properties, reviews, images) {
+async function seed(
+  property_types,
+  users,
+  properties,
+  reviews,
+  images,
+  favourites
+) {
   await dropTables();
 
   await db.query(`CREATE TABLE property_types(
@@ -54,6 +62,12 @@ async function seed(property_types, users, properties, reviews, images) {
                 property_id INT NOT NULL REFERENCES properties(property_id),
                 image_url VARCHAR NOT NULL,
                 alt_text VARCHAR NOT NULL);`);
+
+  await db.query(`CREATE TABLE favourites (
+                favourite_id SERIAL PRIMARY KEY,
+                guest_id INT NOT NULL REFERENCES users(user_id),
+                property_id INT NOT NULL REFERENCES properties(property_id)
+                );`);
 
   await db.query(
     format(
@@ -156,6 +170,21 @@ async function seed(property_types, users, properties, reviews, images) {
         property_id,
         image_url,
         alt_text,
+      ])
+    )
+  );
+
+  const formattedFavourites = formatFavourites(
+    favourites,
+    insertedUsers,
+    insertedProperties
+  );
+  await db.query(
+    format(
+      `INSERT INTO favourites (guest_id, property_id) VALUES %L`,
+      formattedFavourites.map(({ guest_id, property_id }) => [
+        guest_id,
+        property_id,
       ])
     )
   );

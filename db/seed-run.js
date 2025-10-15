@@ -6,6 +6,7 @@ const {
   usersData,
   propertiesData,
   reviewsData,
+  favouritesData,
 } = require("./data");
 
 seed(
@@ -13,7 +14,8 @@ seed(
   usersData,
   propertiesData,
   reviewsData,
-  imagesData
+  imagesData,
+  favouritesData
 ).then(() => {
   db.end();
 });

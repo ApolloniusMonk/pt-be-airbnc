@@ -3,6 +3,7 @@ const {
   formatProperties,
   formatReviews,
   formatImages,
+  formatFavourites,
 } = require("../db/utils");
 
 describe("addUserDefaults", () => {
@@ -124,5 +125,61 @@ describe("formatImages", () => {
         alt_text: "Missing",
       },
     ]);
+  });
+  describe("formatFavourites", () => {
+    const insertedUsers = [
+      { user_id: 1, first_name: "Rachel", surname: "Cummings" },
+      { user_id: 2, first_name: "Frank", surname: "White" },
+      { user_id: 3, first_name: "Bob", surname: "Smith" },
+    ];
+
+    const insertedProperties = [
+      { property_id: 10, name: "Modern Apartment in City Center" },
+      { property_id: 11, name: "Luxury Penthouse with View" },
+      { property_id: 12, name: "Seaside Studio Getaway" },
+    ];
+
+    const favouritesRaw = [
+      {
+        guest_name: "Rachel Cummings",
+        property_name: "Modern Apartment in City Center",
+      },
+      { guest_name: "Bob Smith", property_name: "Seaside Studio Getaway" },
+    ];
+
+    test("maps guest_name and property_name to guest_id and property_id", () => {
+      const result = formatFavourites(
+        favouritesRaw,
+        insertedUsers,
+        insertedProperties
+      );
+      expect(result).toEqual([
+        { guest_id: 1, property_id: 10 },
+        { guest_id: 3, property_id: 12 },
+      ]);
+    });
+    test("throws an error if user not found", () => {
+      const badData = [
+        {
+          guest_name: "Nonexistent User",
+          property_name: "Modern Apartment in City Center",
+        },
+      ];
+      expect(() =>
+        formatFavourites(badData, insertedUsers, insertedProperties)
+      ).toThrow("User not found: Nonexistent User");
+    });
+
+    test("throws an error if property not found", () => {
+      const badData = [
+        {
+          guest_name: "Rachel Cummings",
+          property_name: "Nonexistent Property",
+        },
+      ];
+      expect(() =>
+        formatFavourites(badData, insertedUsers, insertedProperties)
+      ).toThrow("Property not found: Nonexistent Property");
+    });
   });
 });
