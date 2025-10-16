@@ -66,3 +66,36 @@ exports.fetchPropertyById = async (id) => {
 
   return rows[0];
 };
+
+exports.fetchReviewsByPropertyId = async (propertyId) => {
+  const reviewsQuery = `SELECT
+   r.review_id,
+   r.comment,
+   r.rating,
+   r.created_at,
+   (u.first_name || ' ' || u.surname) AS guest,
+   u.avatar AS guest_avatar
+   FROM reviews r
+   JOIN users u ON r.guest_id = u.user_id
+   WHERE r.property_id = $1
+   ORDER BY r.created_at DESC;`;
+
+  const averageQuery = `
+   SELECT AVG(rating) AS average_rating
+   FROM reviews
+   WHERE property_id = $1`;
+
+  const { rows: reviews } = await db.query(reviewsQuery, [propertyId]);
+  const { rows: averageRows } = await db.query(averageQuery, [propertyId]);
+  const average = averageRows[0].average_rating;
+
+  let average_rating;
+
+  if (averageRows[0].average_rating) {
+    average_rating = Number(averageRows[0].average_rating);
+  } else {
+    average_rating = null;
+  }
+
+  return { reviews, average_rating };
+};

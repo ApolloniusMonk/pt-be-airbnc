@@ -8,3 +8,4 @@ To create the local test database, run: npm run setup-db
 
 This project uses a postreSQL connection pool with the pg package.
 Database credentials are stored in environment variables using dotenv.
+

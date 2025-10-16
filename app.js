@@ -1,20 +1,26 @@
 const express = require("express");
 const db = require("./db/db-connection-pool");
-const { getProperties, getPropertyById } = require("./controllers/properties");
+const {
+  getProperties,
+  getPropertyById,
+  getReviewsByPropertyId,
+} = require("./controllers/properties");
+const {
+  handlePathNotFound,
+  handlePropertyNotFound,
+  handleServerErrors,
+} = require("./errors");
 
 const app = express();
 
 app.use(express.json());
 
 app.get("/api/properties", getProperties);
-
 app.get("/api/properties/:id", getPropertyById);
+app.get("/api/properties/:id/reviews", getReviewsByPropertyId);
 
-app.all("/*path", (req, res, next) => {
-  res.status(404).send({ msg: "Path not found." });
-});
+app.all("/*path", handlePathNotFound);
+app.use(handlePropertyNotFound);
+app.use(handleServerErrors);
 
-app.use((err, req, res, next) => {
-  res.status(500).send({ msg: "Server error." });
-});
 module.exports = app;
