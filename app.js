@@ -7,7 +7,7 @@ const {
 } = require("./controllers/properties");
 const {
   handlePathNotFound,
-  handlePropertyNotFound,
+  handleCustomErrors,
   handleServerErrors,
 } = require("./errors");
 
@@ -19,8 +19,11 @@ app.get("/api/properties", getProperties);
 app.get("/api/properties/:id", getPropertyById);
 app.get("/api/properties/:id/reviews", getReviewsByPropertyId);
 
+// 404 for invalid routes
 app.all("/*path", handlePathNotFound);
-app.use(handlePropertyNotFound);
+
+// error handlers
+app.use(handleCustomErrors);
 app.use(handleServerErrors);
 
 module.exports = app;

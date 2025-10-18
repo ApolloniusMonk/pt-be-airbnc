@@ -61,6 +61,7 @@ exports.fetchPropertyById = async (id) => {
   if (rows.length === 0) {
     const err = new Error(`Property with ID ${id} not found.`);
     err.status = 404;
+    err.msg = `Property with id ${id} not found.`;
     throw err;
   }
 

@@ -59,7 +59,7 @@ describe("app", () => {
       });
     });
 
-    describe("GET api/properties?property_type=<property type>", () => {
+    describe("api/properties?property_type=<property type>", () => {
       test("responds with status of 200", async () => {
         const { body } = await request(app)
           .get("/api/properties?property_type=Apartment")
@@ -80,7 +80,7 @@ describe("app", () => {
       });
     });
 
-    describe("GET api/properties?maxprice=<max cost per night> and ?minprice=<min cost per night>", () => {
+    describe("api/properties?maxprice=<max cost per night> and ?minprice=<min cost per night>", () => {
       test("responds with status of 200", async () => {
         const { body } = await request(app)
           .get("/api/properties?maxprice=200")
@@ -122,6 +122,21 @@ describe("app", () => {
           );
         });
       });
+      describe("Sad path for /api/properties", () => {
+        test("responds with 400 and error message when minprice or maxprice is not a number", async () => {
+          const { body } = await request(app)
+            .get("/api/properties?minprice=abc")
+            .expect(400);
+
+          expect(body.msg).toBe("Invalid query parameter.");
+        });
+
+        test("responds with 404 and error message when property type does not exist", async () => {
+          const { body } = await request(app)
+            .get("/api/properties?property_type=castle")
+            .expect(404);
+        });
+      });
     });
   });
 
@@ -134,7 +149,7 @@ describe("app", () => {
       );
       propertyId = rows[0].property_id;
     });
-
+    //////// HAPPY PATH //////////
     test("responds with status 200 and a property object", async () => {
       const { body } = await request(app)
         .get(`/api/properties/${propertyId}`)
@@ -158,6 +173,7 @@ describe("app", () => {
         Number(propertyId.price_per_night)
       );
     });
+
     test("includes host name and avatar", async () => {
       const { body } = await request(app)
         .get(`/api/properties/${propertyId}`)
@@ -167,6 +183,7 @@ describe("app", () => {
       expect(p.host).toBeTruthy();
       expect(p.host_avatar).toBeTruthy();
     });
+
     test("include favourites count", async () => {
       const { body } = await request(app)
         .get(`/api/properties/${propertyId}`)
@@ -174,6 +191,16 @@ describe("app", () => {
       const p = body.property;
 
       expect(Number(p.favourite_count)).toBeGreaterThanOrEqual(0);
+    });
+
+    describe("Sad path for /api/properties/:id", () => {
+      test("responds with 404 and error message 'Property with id <id> not found.' when id does not exist", async () => {
+        const { body } = await request(app)
+          .get("/api/properties/999999")
+          .expect(404);
+
+        expect(body.msg).toBe("Property with id 999999 not found.");
+      });
     });
   });
 
@@ -219,13 +246,14 @@ describe("app", () => {
         }
       }
     });
+    describe("Sad path for /api/properties/:id/reviews", () => {
+      test("responds with 404 and error message if property id does not exist", async () => {
+        const { body } = await request(app)
+          .get("/api/properties/999999/reviews")
+          .expect(404);
 
-    test("responds with 404 and error message if property id does not exist", async () => {
-      const { body } = await request(app)
-        .get("/api/properties/999999/reviews")
-        .expect(404);
-
-      expect(body.msg).toBe("Property not found.");
+        expect(body.msg).toBe("No reviews found for property id 999999.");
+      });
     });
   });
 });
