@@ -1,38 +1,76 @@
 const db = require("../db/db-connection-pool");
 
-exports.fetchProperties = async (propertyType, maxPrice, minPrice) => {
-  let query = `SELECT 
-                 properties.property_id,
-                 properties.name AS property_name,
-                 properties.location,
-                 properties.price_per_night,
-                 property_types.property_type,
-                 users.first_name || ' ' || users.surname AS host 
-                 FROM properties
-                 JOIN users ON properties.host_id = users.user_id
-                 JOIN property_types ON properties.property_type = property_types.property_type
+exports.fetchProperties = async (filters = {}) => {
+  const { property_type, maxprice, minprice, sort, order } = filters;
 
-                `;
+  let query = `
+    SELECT 
+      properties.property_id,
+      properties.name AS property_name,
+      properties.location,
+      properties.price_per_night,
+      property_types.property_type,
+      users.first_name || ' ' || users.surname AS host
+    FROM properties
+    JOIN users ON properties.host_id = users.user_id
+    JOIN property_types ON properties.property_type = property_types.property_type
+  `;
+
   const queryValues = [];
   const conditions = [];
 
-  if (propertyType) {
+  if (property_type) {
     conditions.push(`properties.property_type = $${queryValues.length + 1}`);
-    queryValues.push(propertyType);
+    queryValues.push(property_type);
   }
-  if (maxPrice) {
+
+  if (maxprice) {
     conditions.push(`properties.price_per_night <= $${queryValues.length + 1}`);
-    queryValues.push(maxPrice);
+    queryValues.push(maxprice);
   }
-  if (minPrice) {
+
+  if (minprice) {
     conditions.push(`properties.price_per_night >= $${queryValues.length + 1}`);
-    queryValues.push(minPrice);
+    queryValues.push(minprice);
   }
+
   if (conditions.length > 0) {
     query += ` WHERE ${conditions.join(" AND ")}`;
   }
-  const { rows } = await db.query(query, queryValues);
 
+  const sortColumnMap = {
+    cost_per_night: "properties.price_per_night",
+    popularity: "favourite_count",
+  };
+
+  const sortBy = sortColumnMap[sort] || "properties.property_id";
+  const orderBy = order === "descending" ? "DESC" : "ASC";
+
+
+  if (sort === "popularity") {
+    query = `
+      SELECT 
+        p.property_id,
+        p.name AS property_name,
+        p.location,
+        p.price_per_night,
+        pt.property_type,
+        u.first_name || ' ' || u.surname AS host,
+        COUNT(f.favourite_id)::INT AS favourite_count
+      FROM properties p
+      JOIN users u ON p.host_id = u.user_id
+      JOIN property_types pt ON p.property_type = pt.property_type
+      LEFT JOIN favourites f ON f.property_id = p.property_id
+      ${conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""}
+      GROUP BY p.property_id, pt.property_type, u.first_name, u.surname
+      ORDER BY ${sortBy} ${orderBy};
+    `;
+  } else {
+  
+    query += ` ORDER BY ${sortBy} ${orderBy};`;
+  }
+
+  const { rows } = await db.query(query, queryValues);
   return rows;
 };
 
@@ -100,3 +138,4 @@ exports.fetchReviewsByPropertyId = async (propertyId) => {
 
   return { reviews, average_rating };
 };
+
