@@ -1,10 +1,10 @@
 body {
-    font-family: fantasy;
+    font-family: fantasy; color: rgb(11, 94, 129); font-feature-settings: "stch";
     background-color: antiquewhite;
 }
 
 header {
-    background-color: rgb(29, 134, 180);
+    background-color: rgb(11, 94, 129);
     text-align: center;
-    font-family: fantasy;
+    font-family: fantasy; color: rgb(227, 213, 26);
 }
