@@ -1,15 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 const db = require("./db/db-connection-pool");
 const {
   getProperties,
   getPropertyById,
   getReviewsByPropertyId,
   postReviewForProperty,
-  
 } = require("./controllers/properties");
 
 const { getUserById } = require("./controllers/users");
-const { deleteReview} = require("./controllers/reviews")
+const { deleteReview } = require("./controllers/reviews");
 
 const {
   handlePathNotFound,
@@ -19,7 +19,8 @@ const {
 
 const app = express();
 
-app.use(express.static("public"))
+app.use(cors());
+app.use(express.static("public"));
 app.use(express.json());
 
 app.get("/api/properties", getProperties);
@@ -27,7 +28,7 @@ app.get("/api/properties/:id", getPropertyById);
 app.get("/api/properties/:id/reviews", getReviewsByPropertyId);
 app.get("/api/users/:id", getUserById);
 app.post("/api/properties/:id/reviews", postReviewForProperty);
-app.delete("/api/reviews/:id", deleteReview )
+app.delete("/api/reviews/:id", deleteReview);
 
 // 404 for invalid routes
 app.all("/*path", handlePathNotFound);
