@@ -11,11 +11,13 @@ exports.fetchProperties = async (filters = {}) => {
       properties.price_per_night,
       property_types.property_type,
       users.first_name || ' ' || users.surname AS host,
-      images.image_url
-    FROM properties
-    JOIN users ON properties.host_id = users.user_id
-    JOIN property_types ON properties.property_type = property_types.property_type
-    LEFT JOIN images ON images.property_id = properties.property_id
+      ARRAY_AGG(i.image_url) AS images
+    FROM properties p
+    JOIN users u ON p.host_id = u.user_id
+    JOIN property_types pt ON p.property_type = pt.property_type
+    LEFT JOIN images i ON i.property_id = p.property_id
+    GROUP BY p.property_id, pt.property_type, u.first_name, u.surname
+    ORDER BY p.property_id;
   `;
 
   const queryValues = [];
