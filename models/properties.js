@@ -10,10 +10,12 @@ exports.fetchProperties = async (filters = {}) => {
       properties.location,
       properties.price_per_night,
       property_types.property_type,
-      users.first_name || ' ' || users.surname AS host
+      users.first_name || ' ' || users.surname AS host,
+      images.image_url
     FROM properties
     JOIN users ON properties.host_id = users.user_id
     JOIN property_types ON properties.property_type = property_types.property_type
+    LEFT JOIN images ON images.property_id = properties.property_id
   `;
 
   const queryValues = [];
@@ -46,7 +48,6 @@ exports.fetchProperties = async (filters = {}) => {
   const sortBy = sortColumnMap[sort] || "properties.property_id";
   const orderBy = order === "descending" ? "DESC" : "ASC";
 
-
   if (sort === "popularity") {
     query = `
       SELECT 
@@ -66,7 +67,6 @@ exports.fetchProperties = async (filters = {}) => {
       ORDER BY ${sortBy} ${orderBy};
     `;
   } else {
-  
     query += ` ORDER BY ${sortBy} ${orderBy};`;
   }
 
@@ -138,4 +138,3 @@ exports.fetchReviewsByPropertyId = async (propertyId) => {
 
   return { reviews, average_rating };
 };
-
