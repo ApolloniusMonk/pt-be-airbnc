@@ -5,36 +5,34 @@ exports.fetchProperties = async (filters = {}) => {
 
   let query = `
     SELECT 
-      properties.property_id,
-      properties.name AS property_name,
-      properties.location,
-      properties.price_per_night,
-      property_types.property_type,
-      users.first_name || ' ' || users.surname AS host,
-      ARRAY_AGG(i.image_url) AS images
+      p.property_id,
+      p.name AS property_name,
+      p.location,
+      p.price_per_night,
+      pt.property_type,
+      u.first_name || ' ' || u.surname AS host,
+      COALESCE(ARRAY_AGG(i.image_url) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images
     FROM properties p
     JOIN users u ON p.host_id = u.user_id
     JOIN property_types pt ON p.property_type = pt.property_type
     LEFT JOIN images i ON i.property_id = p.property_id
-    GROUP BY p.property_id, pt.property_type, u.first_name, u.surname
-    ORDER BY p.property_id;
   `;
 
   const queryValues = [];
   const conditions = [];
 
   if (property_type) {
-    conditions.push(`properties.property_type = $${queryValues.length + 1}`);
+    conditions.push(`p.property_type = $${queryValues.length + 1}`);
     queryValues.push(property_type);
   }
 
   if (maxprice) {
-    conditions.push(`properties.price_per_night <= $${queryValues.length + 1}`);
+    conditions.push(`p.price_per_night <= $${queryValues.length + 1}`);
     queryValues.push(maxprice);
   }
 
   if (minprice) {
-    conditions.push(`properties.price_per_night >= $${queryValues.length + 1}`);
+    conditions.push(`p.price_per_night >= $${queryValues.length + 1}`);
     queryValues.push(minprice);
   }
 
@@ -42,12 +40,23 @@ exports.fetchProperties = async (filters = {}) => {
     query += ` WHERE ${conditions.join(" AND ")}`;
   }
 
+  query += `
+  GROUP BY
+  p.property_id,
+  p.name,
+  p.location,
+  p.price_per_night,
+  pt.property_type,
+  u.first_name,
+  u.surname
+ `;
+
   const sortColumnMap = {
-    cost_per_night: "properties.price_per_night",
+    cost_per_night: "p.price_per_night",
     popularity: "favourite_count",
   };
 
-  const sortBy = sortColumnMap[sort] || "properties.property_id";
+  const sortBy = sortColumnMap[sort] || "p.property_id";
   const orderBy = order === "descending" ? "DESC" : "ASC";
 
   if (sort === "popularity") {
