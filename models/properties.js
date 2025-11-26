@@ -68,13 +68,14 @@ exports.fetchProperties = async (filters = {}) => {
         p.price_per_night,
         pt.property_type,
         u.first_name || ' ' || u.surname AS host,
+        COALESCE(ARRAY_AGG(i.image_url) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images,
         COUNT(f.favourite_id)::INT AS favourite_count
       FROM properties p
       JOIN users u ON p.host_id = u.user_id
       JOIN property_types pt ON p.property_type = pt.property_type
       LEFT JOIN favourites f ON f.property_id = p.property_id
       ${conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""}
-      GROUP BY p.property_id, pt.property_type, u.first_name, u.surname
+      GROUP BY p.property_id, p.name, p.location, p.price_per_night, pt.property_type, u.first_name, u.surname
       ORDER BY ${sortBy} ${orderBy};
     `;
   } else {
