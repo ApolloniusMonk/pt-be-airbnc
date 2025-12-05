@@ -11,7 +11,7 @@ exports.fetchProperties = async (filters = {}) => {
       p.price_per_night,
       pt.property_type,
       u.first_name || ' ' || u.surname AS host,
-      COALESCE(ARRAY_AGG(i.image_url) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images
+      COALESCE(ARRAY_AGG(i.image_url ORDER BY i.image_url ASC) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images
     FROM properties p
     JOIN users u ON p.host_id = u.user_id
     JOIN property_types pt ON p.property_type = pt.property_type
