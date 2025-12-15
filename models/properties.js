@@ -96,14 +96,14 @@ exports.fetchPropertyById = async (id) => {
       p.price_per_night,
       p.description,
       u.first_name || ' ' || u.surname AS host,
-      COALESCE(ARRAY_AGG(i.image_url ORDER BY i.image_url ASC) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images,
+      COALESCE(ARRAY_AGG(DISTINCT i.image_url ORDER BY i.image_id), '{}') AS images,
       COUNT(f.favourite_id)::INT AS favourite_count
     FROM properties p
     JOIN users u ON p.host_id = u.user_id
     LEFT JOIN images i ON i.property_id = p.property_id
     LEFT JOIN favourites f ON f.property_id = p.property_id
     WHERE p.property_id = $1
-    GROUP BY p.property_id, u.first_name, u.surname, i.image_url;
+    GROUP BY p.property_id, u.first_name, u.surname;
   `;
 
   const { rows } = await db.query(query, [id]);
