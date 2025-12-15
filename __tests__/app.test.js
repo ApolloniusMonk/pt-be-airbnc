@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../app");
 const seed = require("../db/seed");
+
 const {
   propertyTypesData,
   usersData,
@@ -56,6 +57,7 @@ describe("GET api/properties", () => {
       expect(property).toHaveProperty("location");
       expect(property).toHaveProperty("price_per_night");
       expect(property).toHaveProperty("host");
+      expect(property).toHaveProperty("images");
     });
   });
 

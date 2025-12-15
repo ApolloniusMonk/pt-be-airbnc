@@ -1,5 +1,3 @@
-console.log(">>>utils loaded");
-
 function addUserDefaults(users = []) {
   return users.map((user, index) => {
     return {

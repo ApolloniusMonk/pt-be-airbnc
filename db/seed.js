@@ -1,5 +1,3 @@
-console.log(">>>seeding started");
-
 const db = require("./db-connection-pool");
 
 const format = require("pg-format");
