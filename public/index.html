@@ -1,52 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keith's AirBnC API docs</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header><h1>WELCOME TO AIRBNC API</h1>
-        <!-- <img src="https://i.pinimg.com/474x/84/81/90/84819048633bdf5758cc33757e33bbb0.jpg" alt=""> -->
-        <p>The RESTful API for property listings, users and reviews</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AirBnC API Documentation</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
 
-</header>
+  <body>
+    <header>
+      <h1>WELCOME TO AIRBNC API</h1>
+      <p>The RESTful API for property listings, users and reviews</p>
+    </header>
 
     <main>
-        <section>
-            <h2>Endpoints overview</h2>
-            <ul>
-                <li><code>GET /api/properties</code> - List all properties</li>
-                <li><code>GET /api/properties/:id</code> - Get a single property </li>
-                <li><code>GET /api/properties/:id/reviews</code> - Get reviews for a property </li>
-                <li><code>GET /users/:id</code> - Get user details </li>
-                <li><code>POST /api/properties/:id/reviews</code> - Add a review </li>
-                <li><code>DELETE /api/reviews/:id</code> - delete a review
-                </section>
-   
-        <h2>Example request</h2>
+      <section>
+        <h2>Endpoints Overview</h2>
+        <ul>
+          <li><code>GET /api/properties</code></li>
+          <li><code>GET /api/properties/:id</code></li>
+          <li><code>GET /api/properties/:id/reviews</code></li>
+          <li><code>GET /api/users/:id</code></li>
+          <li><code>POST /api/properties/:id/reviews</code></li>
+          <li><code>DELETE /api/reviews/:id</code></li>
+        </ul>
+      </section>
+
+      <section class="endpoint">
+        <h3>GET /api/properties</h3>
+        <p>
+          Returns a list of all properties. Supports filtering by price and
+          property type.
+        </p>
+
+        <h4>Query parameters</h4>
+        <ul>
+          <li><code>property_type</code> (string)</li>
+          <li><code>minprice</code> (number)</li>
+          <li><code>maxprice</code> (number)</li>
+        </ul>
+
+        <h4>Example request</h4>
         <pre><code>GET /api/properties?property_type=Apartment&minprice=50&maxprice=150</code></pre>
-    </section>
-    <section><h2>Example response</h2>
-        <pre>
-            <code>{
-                "properties": [
-               
-                {
-                    "property_id": 1,
-                    "property_name": "Modern Apartment in City Centre",
-                    "location": "London, UK",
-                    "price_per_night": 120,
-                    "property_type": "Apartment",
-                    "host": "Alice Johnson"
-                }
-              ]
-            }
-            </code>
-        </pre>
+
+        <h4>Example response</h4>
+        <pre><code>{
+  "properties": [
+    {
+      "property_id": 1,
+      "property_name": "Modern Apartment in City Centre",
+      "location": "London, UK",
+      "price_per_night": 120,
+      "property_type": "Apartment",
+      "host": "Alice Johnson"
+    }
+  ]
+}</code></pre>
+      </section>
+
+      <section class="endpoint">
+        <h3>GET /api/properties/:id</h3>
+        <p>Returns a single property by its ID.</p>
+
+        <h4>Example request</h4>
+        <pre><code>GET /api/properties/1</code></pre>
+
+        <h4>Example response</h4>
+        <pre><code>{
+  "property": {
+    "property_id": 1,
+    "property_name": "Modern Apartment in City Centre",
+    "location": "London, UK",
+    "price_per_night": 120,
+    "description": "...",
+    "host": "Alice Johnson",
+    "images": ["https://..."]
+  }
+}</code></pre>
+      </section>
     </main>
-    <h3>Made by Keith Wass</h3>
-</body>
+
+    <footer>
+      <h3>Made by Keith Wass</h3>
+    </footer>
+  </body>
 </html>
