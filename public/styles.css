@@ -1,13 +1,17 @@
 body {
-  font-family: Arial, Helvetica, sans-serif;
-  color: rgb(26, 27, 28);
-  font-feature-settings: "stch";
-  background-color: rgb(242, 242, 234);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #333;
+  font-size: 1rem;
+  background-color: #f9f9f9;
 }
 
 header {
-  background-color: rgb(242, 242, 234);
-  text-align: center;
-  font-family: Arial, Helvetica, sans-serif;
-  color: rgb(26, 27, 28);
+  background-color: #fff;
+  width: 90%;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  padding-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 20px;
+  border-radius: 10px;
 }
