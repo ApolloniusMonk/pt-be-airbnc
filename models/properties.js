@@ -128,6 +128,7 @@ exports.fetchPropertyById = async (id) => {
       p.location,
       p.price_per_night,
       p.description,
+      p.host_id,
       u.first_name || ' ' || u.surname AS host,
 
       COALESCE(img.images, '{}') AS images,

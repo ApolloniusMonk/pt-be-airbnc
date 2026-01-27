@@ -19,7 +19,7 @@ beforeEach(async () => {
     propertiesData,
     reviewsData,
     imagesData,
-    favouritesData
+    favouritesData,
   );
 });
 
@@ -69,7 +69,7 @@ describe("GET api/properties", () => {
     });
     test("responds with properties that match property type that has been passed", async () => {
       const expectedApartments = propertiesData.filter(
-        (p) => p.property_type === "Apartment"
+        (p) => p.property_type === "Apartment",
       );
 
       const { body } = await request(app)
@@ -92,7 +92,7 @@ describe("GET api/properties", () => {
       const maxprice = 200;
 
       const expected = propertiesData.filter(
-        (p) => p.price_per_night <= maxprice
+        (p) => p.price_per_night <= maxprice,
       );
       const { body } = await request(app)
         .get(`/api/properties?maxprice=${maxprice}`)
@@ -108,7 +108,7 @@ describe("GET api/properties", () => {
       const minprice = 150;
 
       const expected = propertiesData.filter(
-        (p) => p.price_per_night >= minprice
+        (p) => p.price_per_night >= minprice,
       );
       const { body } = await request(app)
         .get(`/api/properties?minprice=${minprice}`)
@@ -118,7 +118,7 @@ describe("GET api/properties", () => {
 
       body.properties.forEach((property) => {
         expect(Number(property.price_per_night)).toBeGreaterThanOrEqual(
-          minprice
+          minprice,
         );
       });
     });
@@ -190,7 +190,7 @@ describe("GET /api/properties/:id", () => {
 
   beforeEach(async () => {
     const { rows } = await db.query(
-      "SELECT property_id FROM properties LIMIT 1;"
+      "SELECT property_id FROM properties LIMIT 1;",
     );
     propertyId = rows[0].property_id;
   });
@@ -215,7 +215,7 @@ describe("GET /api/properties/:id", () => {
     expect(propertyId[1]).toBe(propertyId.property_name);
     expect(propertyId[2]).toBe(propertyId.location);
     expect(Number(propertyId.price_per_night)).toBe(
-      Number(propertyId.price_per_night)
+      Number(propertyId.price_per_night),
     );
   });
 
@@ -245,7 +245,7 @@ describe("GET /api/properties/:id", () => {
     beforeEach(async () => {
       const { rows: favouriters } = await db.query(
         "SELECT guest_id FROM favourites WHERE property_id = $1 LIMIT 1;",
-        [propertyId]
+        [propertyId],
       );
       userIdWhoFavourited = favouriters.length ? favouriters[0].guest_id : null;
 
@@ -267,7 +267,7 @@ describe("GET /api/properties/:id", () => {
 
       const { body } = await request(app)
         .get(
-          `/api/properties/${propertyId}?user_id=${userIdWhoDidNotFavourite}`
+          `/api/properties/${propertyId}?user_id=${userIdWhoDidNotFavourite}`,
         )
         .expect(200);
       expect(body.property).toHaveProperty("favourited", false);
@@ -297,7 +297,7 @@ describe("GET /api/properties/:id/reviews", () => {
 
   beforeEach(async () => {
     const { rows } = await db.query(
-      "SELECT property_id FROM properties LIMIT 1;"
+      "SELECT property_id FROM properties LIMIT 1;",
     );
     propertyId = rows[0].property_id;
     response = await request(app).get(`/api/properties/${propertyId}/reviews`);
@@ -372,11 +372,11 @@ describe("POST /api/properties/:id/reviews", () => {
 
   beforeEach(async () => {
     const { rows: p } = await db.query(
-      "SELECT property_id FROM properties LIMIT 1"
+      "SELECT property_id FROM properties LIMIT 1",
     );
     propertyId = p[0].property_id;
     const { rows: u } = await db.query(
-      "SELECT user_id FROM users WHERE is_host = false LIMIT 1"
+      "SELECT user_id FROM users WHERE is_host = false LIMIT 1",
     );
     aGuestId = u[0].user_id;
   });
@@ -431,7 +431,7 @@ describe("DELETE /api/reviews/:id", () => {
     await request(app).delete(`/api/reviews/${reviewId}`).expect(204);
     const { rows } = await db.query(
       "SELECT * FROM reviews WHERE review_id = $1",
-      [reviewId]
+      [reviewId],
     );
     expect(rows.length).toBe(0);
   });
