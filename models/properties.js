@@ -11,11 +11,21 @@ exports.fetchProperties = async (filters = {}) => {
       p.price_per_night,
       pt.property_type,
       u.first_name || ' ' || u.surname AS host,
-      COALESCE(ARRAY_AGG(i.image_url ORDER BY i.image_id) FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images
+      
+      COALESCE(ARRAY_AGG(i.image_url ORDER BY i.image_id) 
+      FILTER (WHERE i.image_url IS NOT NULL), '{}') AS images,
+
+      ROUND(AVG(r.rating), 1) AS average_rating,
+      COUNT(r.review_id)::int AS review_count
+
+
     FROM properties p
     JOIN users u ON p.host_id = u.user_id
     JOIN property_types pt ON p.property_type = pt.property_type
     LEFT JOIN images i ON i.property_id = p.property_id
+    LEFT JOIN reviews r ON r.property_id = property.property_id
+
+    GROUP BY p.property_id, pt.property_type, u.first_name, u.surname;
   `;
 
   const queryValues = [];
