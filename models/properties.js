@@ -17,14 +17,6 @@ exports.fetchProperties = async (filters = {}) => {
     JOIN property_types pt ON p.property_type = pt.property_type
     LEFT JOIN images i ON i.property_id = p.property_id
 
-    GROUP BY
-    p.property_id,
-    p.name,
-    p.location,
-    p.price_per_night,
-    pt.property_type,
-    u.first_name,
-    u.surname
   `;
 
   const queryValues = [];
